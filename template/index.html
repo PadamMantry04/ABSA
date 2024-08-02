@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Aspect-Based Sentiment Analysis</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+    <h1>Aspect-Based Sentiment Analysis</h1>
+    <textarea id="reviewInput" placeholder="Enter your reviews here..."></textarea>
+    <br><br>
+    <button onclick="analyzeSentiment()">Analyze</button>
+    <div class="results" id="results">
+        <h3>Positive Aspects:</h3>
+        <div class="positive" id="positiveAspects"></div>
+        <h3>Negative Aspects:</h3>
+        <div class="negative" id="negativeAspects"></div>
+        <h3>Overall Sentiments:</h3>
+        <div class="overall" id="overallSentiments"></div>
+    </div>
+</div>
+<script>
+    function analyzeSentiment() {
+        const reviews = document.getElementById('reviewInput').value.split('\n').filter(line => line.trim() !== '');
+        fetch('/predict', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ reviews: reviews })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('positiveAspects').innerText = data.aspect_sentiments.positive.join(', ');
+            document.getElementById('negativeAspects').innerText = data.aspect_sentiments.negative.join(', ');
+            document.getElementById('overallSentiments').innerText = data.overall_sentiments.join(', ');
+        });
+
+    }
+</script>
+</body>
+</html>
